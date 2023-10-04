@@ -1,0 +1,97 @@
+---
+title: "Homework 2"
+author: "Ritika Sibal"
+date: "`r Sys.Date()`"
+output: 
+  prettydoc::html_pretty:
+    theme: cayman
+    toc: true
+    number_sections: true
+---
+<center>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/sTtPAu3vNzQ?si=4uQ2aTxkh1PrOLRI" data-external= "1" > </iframe>
+
+<br> *Got information about embedded video from: https://stackoverflow.com/questions/38517236/youtube-video-in-r-markdown*
+</center>
+
+## Background
+
+Background: Every Saturday, at the same time, a primatologist goes and sits in the forest in the morning and listens for titi monkey calls, counting the number of calls they hear in a 2 hour window from 5am to 7am. Based on previous knowledge, she believes that the mean number calls she will hear in that time is exactly 15. Let X represent the appropriate Poisson random variable of the number of calls heard in each monitoring session.
+
+## What is the probability that she will hear more than 8 calls during any given session?
+
+``` {r HW2.1}
+# We know lambda is the "mean number of occurrences of the event in the given interval"
+# Thus, our lambda will be 15 in a 2 hour interval
+l<-15
+x = 9 # 9 calls since the question asks for MORE than 8
+# lower.tail=FALSE gives us everything >9
+ppois(q = x, lambda = l, lower.tail=FALSE)
+
+```
+
+## What is the probability that she will hear no calls in a session?
+``` {r HW2.2} 
+x<-0 # 2 calls
+dpois(x = x, lambda = l)
+```
+
+## What is the probability that she will hear exactly 3 calls in a session?
+``` {r HW2.3} 
+x<-3 # 3 calls
+dpois(x = x, lambda = l)
+```
+
+## Plot the relevant Poisson mass function over the values in range 0 ≤ x ≤ 30.
+``` {r HW2.4} 
+x<-0:30 # Range 0 ≤ x ≤ 30
+probset <- dpois(x = x, lambda = l)
+barplot(probset, names.arg = x, space = 0, xlab = "x", ylab = "Pr(X = x)", main = "Probability Mass Function")
+```
+
+## Simulate 104 results from this distribution (i.e., 2 years of Saturday monitoring sessions).
+``` {r HW2.5} 
+n = 104
+(results<-rpois(n, l)) # rpois simulates random data, adding () will output data onto console in one command
+```
+
+## Plot the simulated results using hist() and use xlim() to set the horizontal limits to be from 0 to 30. How does your histogram compare to the shape of the probability mass function you plotted above
+
+
+As seen in the graphical output, the histogram created from the randomly simulated results does generally, but not perfectly, follow the Poisson Distribution generated with lamba=15. This makes sense as the randomness of the rpois() function will also lead to some randomness in the results, making our histogram/results not perfectly poisson-ly distributed.
+
+``` {r HW2.6} 
+x<-0:30
+probset <- dpois(x = x, lambda = l)
+
+# histogram plot first
+p1<-hist(results, breaks=30, plot=FALSE)
+plot(p1, xlim=c(0,30), col='blue', xlab='Number of calls (in 2hr interval)', ylab='Frequency of calls', main = " Titi Monkey calls heard in n=104 trials")
+# Add a line to the histogram plot showing the true poisson distribution, I did this by just multiplying the Poisson distribution created in the last step (probset) by n=104.
+lines(probset*n, col='red')
+
+# Used this to scale legend: https://www.geeksforgeeks.org/change-legend-size-in-base-r-plot/
+legend("topleft", cex=0.9, c("Simulated Calls", "Poisson Distributed Calls"), fill=c("blue", "red"))
+```
+
+## Reflection 
+**When I was coding:**
+
+*3 things were difficult: *
+<br> 1) I still have some trouble in the development phase, I am tending to test everything in the console forgetting that I can run chunks of data!
+<br> 2) Graphing was hard this time! I wanted to add a line to my histogram chart and it was difficult to figure out how to do in base R--I ultimately realized that I was not bin-ing my data correctly 
+<br> 3) Embedding the video was interesting! I finally realized what the embed link on Youtube is for. 
+
+*3 ways your peers commentary helped you:*
+<br> 1) I had missed that the first question asked for MORE than 8, not 8 and more! 
+<br> 2) I had also forgotten to add the titi monkey video/photo
+<br> 3) My partner suggesting adding more comments in my code and upon reflection I agree! I think I can do a better job of commenting
+
+**When I was Peer Commentating:** 
+
+*2 things you liked in your peers code:*
+<br> 1) My peer commented their code very well, from a reader perspective it was very easy to understand
+<br> 2) My peer plotted their answers for more questions than we were required to and I felt it really helped my visualise the data!
+
+*1 thing that could use improvement:*
+<br> 1) My peer partner gave the explanation for how the simulated histogram varied from the actual Poisson distribution based on what compiled on her computer but I encouraged her to give a more general answer as each complication will result in different values since we used the rpois command!
